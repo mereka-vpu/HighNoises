@@ -72,7 +72,7 @@ public class HighNoiseGenerator extends ChunkGenerator {
 
     @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
-        List<BlockPopulators> populators = new ArrayList<>();
+        List<BlockPopulator> populators = new ArrayList<>();
         populators.add(new TreePopulator()); // Add trees
         populators.add(new MobSpawner());   // Add mobs
         return populators;
