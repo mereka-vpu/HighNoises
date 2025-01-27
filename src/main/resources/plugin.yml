@@ -1,0 +1,9 @@
+name: HighNoiseWorlds
+version: 1.0
+main: com.nzst.highnoiseworlds.HighNoiseWorlds
+api-version: 1.20
+description: Custom world generator plugin with high noise for Multiverse-Core
+
+commands:
+  mvcreate:
+    description: Multiverse Create World Command Integration
