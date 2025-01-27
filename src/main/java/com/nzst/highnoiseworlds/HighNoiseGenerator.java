@@ -25,12 +25,12 @@ public class HighNoiseGenerator extends ChunkGenerator {
                 int worldX = chunkX * 16 + x;
                 int worldZ = chunkZ * 16 + z;
 
-                // Generate random noise for terrain height
-                double noise = generatePerlinNoise(worldX, worldZ, random); // Perlin noise
-                double mountainNoise = generateMountainNoise(worldX, worldZ, random); // Mountain noise
+                // Generate noise for terrain height
+                double noise = generatePerlinNoise(worldX, worldZ, random);
+                double mountainNoise = generateMountainNoise(worldX, worldZ, random);
 
-                // Add mountain influence
-                double heightFactor = noise + mountainNoise * 0.5; // Amplify mountain contribution
+                // Combine noise values to determine height
+                double heightFactor = noise + (mountainNoise * 0.5);
                 heightFactor = Math.max(0, Math.min(heightFactor, 1.0)); // Clamp between 0 and 1
                 int height = (int) (heightFactor * 70 + 70); // Normalize and scale height
 
@@ -41,7 +41,7 @@ public class HighNoiseGenerator extends ChunkGenerator {
                 for (int y = 0; y <= height; y++) {
                     if (y == height) {
                         chunkData.setBlock(x, y, z, Material.GRASS_BLOCK); // Topsoil layer
-                    } else if (y > height - 5) {
+                    } else if (y >= height - 5) {
                         chunkData.setBlock(x, y, z, Material.DIRT); // Sub-layer
                     } else {
                         chunkData.setBlock(x, y, z, Material.STONE); // Base layer
@@ -56,21 +56,23 @@ public class HighNoiseGenerator extends ChunkGenerator {
         return chunkData;
     }
 
-    // Generate Perlin noise for smooth terrain
+    // Generate Perlin-like noise for smooth terrain
     private double generatePerlinNoise(int x, int z, Random random) {
-        // Simulate Perlin noise generation (replace with actual implementation as needed)
-        return random.nextDouble();
+        double frequency = 0.01;
+        double amplitude = 1.0;
+        return (random.nextDouble() * amplitude) * Math.sin(x * frequency + z * frequency);
     }
 
     // Generate additional noise for mountainous regions
     private double generateMountainNoise(int x, int z, Random random) {
-        // Add noise with lower frequency for mountains
-        return random.nextDouble() * 0.7; // Mountain regions are slightly elevated
+        double frequency = 0.005;
+        double amplitude = 0.7;
+        return (random.nextDouble() * amplitude) * Math.cos(x * frequency + z * frequency);
     }
 
     @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
-        List<BlockPopulator> populators = new ArrayList<>();
+        List<BlockPopulators> populators = new ArrayList<>();
         populators.add(new TreePopulator()); // Add trees
         populators.add(new MobSpawner());   // Add mobs
         return populators;
@@ -78,14 +80,13 @@ public class HighNoiseGenerator extends ChunkGenerator {
 
     // TreePopulator to add trees
     private static class TreePopulator extends BlockPopulator {
-
         @Override
         public void populate(World world, Random random, Chunk chunk) {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     int worldX = chunk.getX() * 16 + x;
                     int worldZ = chunk.getZ() * 16 + z;
-                    int highestY = world.getHighestBlockYAt(worldX, worldZ);
+                    int highestY = chunk.getWorld().getHighestBlockYAt(worldX, worldZ);
 
                     // Chance to spawn a tree
                     if (random.nextInt(10) == 0) { // 1 in 10 chance
@@ -100,7 +101,7 @@ public class HighNoiseGenerator extends ChunkGenerator {
 
             // Generate trunk
             for (int i = 0; i < treeHeight; i++) {
-                if (y + i < 256) { // Ensure the trunk doesn't exceed the world height limit
+                if (y + i < 256) {
                     world.getBlockAt(x, y + i, z).setType(Material.OAK_LOG);
                 }
             }
@@ -109,9 +110,8 @@ public class HighNoiseGenerator extends ChunkGenerator {
             for (int dx = -2; dx <= 2; dx++) {
                 for (int dz = -2; dz <= 2; dz++) {
                     for (int dy = treeHeight - 2; dy <= treeHeight; dy++) {
-                        // Make leaves appear around the top of the trunk
                         if (Math.abs(dx) + Math.abs(dz) + Math.abs(dy - treeHeight) <= 3) {
-                            if (y + dy < 256) { // Ensure leaves don't exceed the height limit
+                            if (y + dy < 256) {
                                 world.getBlockAt(x + dx, y + dy, z + dz).setType(Material.OAK_LEAVES);
                             }
                         }
@@ -123,7 +123,6 @@ public class HighNoiseGenerator extends ChunkGenerator {
 
     // MobSpawner to add mobs
     private static class MobSpawner extends BlockPopulator {
-
         @Override
         public void populate(World world, Random random, Chunk chunk) {
             for (int x = 0; x < 16; x++) {
