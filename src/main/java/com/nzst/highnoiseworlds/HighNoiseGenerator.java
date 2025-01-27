@@ -11,6 +11,7 @@ public class HighNoiseGenerator extends ChunkGenerator {
     @Override
     public ChunkData generateChunkData(World world, Random random, int chunkX, int chunkZ, BiomeGrid biome) {
         ChunkData chunkData = createChunkData(world);
+
         int maxHeight = 256; // Minecraft height limit
 
         for (int x = 0; x < 16; x++) {
@@ -18,9 +19,17 @@ public class HighNoiseGenerator extends ChunkGenerator {
                 int worldX = chunkX * 16 + x;
                 int worldZ = chunkZ * 16 + z;
 
-                // Noise value increases or decreases every 8 blocks
-                double noiseValue = Math.sin((worldX / 8.0) * Math.PI) * Math.cos((worldZ / 8.0) * Math.PI) * 20;
-                int height = (int) (noiseValue + 70); // Base height + noise adjustment
+                // Generate random noise for terrain height
+                double randomNumber1 = random.nextDouble(); // Random value between 0.0 and 1.0
+                double randomNumber2 = random.nextDouble(); // Another random value between 0.0 and 1.0
+                double noise = Math.sin(worldX / 8.0) * Math.cos(worldZ / 8.0);
+
+                // Height calculation based on the formula
+                double heightFactor = (randomNumber1 * noise / 0.9 - 0.005 + randomNumber2);
+                int height = (int) (heightFactor * 70 + 70); // Normalize and scale height
+
+                // Ensure height is within valid bounds
+                height = Math.max(1, Math.min(height, maxHeight - 1));
 
                 // Fill blocks up to the calculated height
                 for (int y = 0; y <= height; y++) {
