@@ -20,7 +20,7 @@
         <dependency>
             <groupId>com.onarandombox.multiversecore</groupId>
             <artifactId>multiverse-core</artifactId>
-            <version>4.3.1</version>
+            <version>4.3.12</version>
         </dependency>
     </dependencies>
 
@@ -37,6 +37,11 @@
             <id>multiverse-content</id>
             <name>Multiverse Repository</name>
             <url>https://repo.onarandombox.com/content</url>
+        </repository>
+        <repository>
+            <id>multiverse-multiverse-releases</id>
+            <name>Multiverse Repository</name>
+            <url>https://repo.onarandombox.com/multiverse-releases</url>
         </repository>
     </repositories>
 </project>
