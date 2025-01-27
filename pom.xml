@@ -33,5 +33,10 @@
             <id>OnARandomBox</id>
             <url>https://repo.onarandombox.com/content/repositories/multiverse</url>
         </repository>
+        <repository>
+            <id>multiverse-content</id>
+            <name>Multiverse Repository</name>
+            <url>https://repo.onarandombox.com/content</url>
+        </repository>
     </repositories>
 </project>
