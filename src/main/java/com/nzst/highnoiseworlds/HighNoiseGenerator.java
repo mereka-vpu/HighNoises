@@ -1,5 +1,6 @@
 package com.nzst.highnoiseworlds;
 
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
